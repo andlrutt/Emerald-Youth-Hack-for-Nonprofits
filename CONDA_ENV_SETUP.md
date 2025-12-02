@@ -7,8 +7,7 @@ This project uses a custom conda environment with all required dependencies.
 
 ## Dependencies Included
 - **Python 3.12**
-- **PyPDF2** (>=3.0.0) - PDF manipulation library
-- **pypdf** (>=6.0.0) - Modern PDF library
+- **pypdf** (>=6.0.0) - Modern PDF manipulation library (successor to PyPDF2)
 - **reportlab** (>=4.0.0) - PDF generation library
 - **pytest** (>=7.0.0) - Testing framework
 
@@ -68,6 +67,6 @@ To verify all packages are installed correctly:
 
 ```bash
 conda activate emerald-youth-hack
-python -c "import PyPDF2; import pypdf; import reportlab; import pytest; print('All dependencies OK!')"
+python -c "import pypdf; import reportlab; import pytest; print('All dependencies OK!')"
 ```
 

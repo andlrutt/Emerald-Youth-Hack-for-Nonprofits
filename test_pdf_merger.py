@@ -23,11 +23,11 @@ from pdf_merger import merge_pdfs
 try:
     from reportlab.pdfgen import canvas
     from reportlab.lib.pagesizes import letter
-    from PyPDF2 import PdfReader
+    from pypdf import PdfReader
     REPORTLAB_AVAILABLE = True
 except ImportError:
     REPORTLAB_AVAILABLE = False
-    pytestmark = pytest.mark.skip("reportlab or PyPDF2 not available")
+    pytestmark = pytest.mark.skip("reportlab or pypdf not available")
 
 
 class TestPDFMergerUnit:

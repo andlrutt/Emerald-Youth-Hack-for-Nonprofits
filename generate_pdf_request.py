@@ -3,8 +3,8 @@ import os
 import re
 from pathlib import Path
 import sys
-from PyPDF2 import PdfMerger
-from PyPDF2.errors import PdfReadError
+from pypdf import PdfWriter, PdfReader
+from pypdf.errors import PdfReadError
 
 # TODO verify that there are no duplicate EYF IDs in the list
 # TODO verify what to do if there is a duplicate EYF ID or we cannot find one?
@@ -149,7 +149,7 @@ def merge_pdfs(pdf_files, output_file_name, overwrite=True):
         print("Set 'overwrite=True' to force merging and replacement.")
         return
 
-    merger = PdfMerger()
+    writer = PdfWriter()
     successful_merges = 0
 
     # 2. Iterate through the list of PDF file paths and append each one
@@ -160,7 +160,9 @@ def merge_pdfs(pdf_files, output_file_name, overwrite=True):
             if not os.path.isfile(pdf_path):
                  raise FileNotFoundError(f"File not found at path: {pdf_path}")
 
-            merger.append(pdf_path)
+            # Read the PDF and append all its pages to the writer
+            reader = PdfReader(pdf_path)
+            writer.append_pages_from_reader(reader)
             print(f"  [SUCCESS] Appended: {os.path.basename(pdf_path)}")
             successful_merges += 1
 
@@ -176,16 +178,17 @@ def merge_pdfs(pdf_files, output_file_name, overwrite=True):
     # 3. Write the final merged PDF to the output file
     if successful_merges > 0:
         try:
-            merger.write(output_file_name)
+            with open(output_file_name, 'wb') as output_file:
+                writer.write(output_file)
             print(f"\n--- Successfully merged {successful_merges} files into: {output_file_name} ---")
         except Exception as e:
             print(f"\n[CRITICAL ERROR] Failed to write output file: {e}")
         finally:
-            merger.close()
+            writer.close()
     else:
         print("\n--- No valid PDF files were successfully appended. Merge skipped. ---")
-        merger.close()
-        
+        writer.close()
+
 def main():
     if len(sys.argv) != 4:
         print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_file>")
