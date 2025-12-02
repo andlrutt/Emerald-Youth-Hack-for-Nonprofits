@@ -1,9 +1,33 @@
-import os
+import pandas as pd
 import re
 from pathlib import Path
 import sys
 # TODO verify that there are no duplicate EYF IDs in the list
 # TODO verify what to do if there is a duplicate EYF ID or we cannot find one?
+# TODO create dependency list/setup
+# pandas, openpyxl
+
+def read_eyf_ids_from_excel(excel_file, column_name="ApricotID"):
+    """
+    Reads a list of EYF IDs from an Excel file.
+
+    Args:
+        excel_file (str): Path to the Excel file containing EYF IDs.
+        column_name (str): Name of the column containing EYF IDs.
+
+    Returns:
+        list: A list of EYF IDs.
+    """
+    # Try reading with default header (row 0)
+    df = pd.read_excel(excel_file)
+    
+    # If column not found, try reading with header in row 1
+    if column_name not in df.columns:
+        df = pd.read_excel(excel_file, header=1)
+    
+    if column_name not in df.columns:
+        raise ValueError(f"Column '{column_name}' not found in Excel file")
+    return df[column_name].dropna().tolist()
 
 
 def validate_file_formats(folder_path, regex_pattern):
@@ -108,15 +132,15 @@ def combine_pdfs(pdf_list):
         
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python generate_pdf_request.py <waiver_folder_path> <ids_file>")
+        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file>")
         print("  <waiver_folder_path>: Path to the folder containing the FERPA waivers")
-        print("  <ids_file>: Path to text file containing EYF IDs (one per line)")
+        print("  <excel_file>: Path to Excel file containing EYF IDs")
         sys.exit(1)
     
     folder_path = sys.argv[1]
-    ids_file = sys.argv[2]
+    excel_file = sys.argv[2]
     
-    eyf_ids = read_eyf_ids_from_file(ids_file)
+    eyf_ids = read_eyf_ids_from_excel(excel_file)
     
     file_pattern = "[EYF ID]_[Client name]_KCS Records Consent_[previous file name]_[date].pdf"
     regex_pattern = r"^[0-9]+_[A-Za-z ]+_KCS Records Consent_.*\.pdf$"
@@ -136,7 +160,7 @@ def main():
         fully_matched_count = len(pdfs_to_combine)
         eyf_id_count = len(eyf_ids)
 
-        print(f"Successfully matched waivers for {fully_matched_count} out of {eyf_id_count} EYF IDs. Proceed with PDF generation?")
+        print(f"Successfully 1:1 matched waivers for {fully_matched_count} out of {eyf_id_count} EYF IDs. Proceed with PDF generation?")
         user_input = input("Enter 'y' to continue or 'n' to cancel: ").strip().lower()
         if user_input != 'y':
             print("Operation cancelled.")
