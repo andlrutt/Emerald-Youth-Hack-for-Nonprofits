@@ -1,13 +1,17 @@
 import pandas as pd
+import os
 import re
 from pathlib import Path
 import sys
+from PyPDF2 import PdfMerger
+from PyPDF2.errors import PdfReadError
+
 # TODO verify that there are no duplicate EYF IDs in the list
 # TODO verify what to do if there is a duplicate EYF ID or we cannot find one?
 # TODO create dependency list/setup
 # pandas, openpyxl
 
-def read_eyf_ids_from_excel(excel_file, column_name="ApricotID"):
+def read_eyf_ids_from_excel(excel_file, column_name="EYFID"):
     """
     Reads a list of EYF IDs from an Excel file.
 
@@ -27,7 +31,15 @@ def read_eyf_ids_from_excel(excel_file, column_name="ApricotID"):
     
     if column_name not in df.columns:
         raise ValueError(f"Column '{column_name}' not found in Excel file")
-    return df[column_name].dropna().tolist()
+    
+    eyf_ids = df[column_name].dropna().astype(int).astype(str).tolist()
+    
+    # Check for duplicates
+    duplicates = [id for id in set(eyf_ids) if eyf_ids.count(id) > 1]
+    if duplicates:
+        raise ValueError(f"Duplicate EYF IDs found in Excel file: {', '.join(duplicates)}")
+    
+    return eyf_ids
 
 
 def validate_file_formats(folder_path, regex_pattern):
@@ -119,23 +131,72 @@ def process_waiver_matches(eyf_ids_with_filepaths):
             pdfs_to_combine.append(filepaths[0])
     return pdfs_to_combine
 
-def combine_pdfs(pdf_list):
+def merge_pdfs(pdf_files, output_file_name, overwrite=True):
     """
-    Creates the combined PDF from the list of files
+    Merges a list of PDF files into a single output file in the order specified.
+    Includes checks for file existence and robust error handling.
 
     Args:
-        pdf_list (list): A list of paths to PDF files to be combined.
+        pdf_files (list): A list of strings, where each string is the
+                          full path to a PDF file to be merged.
+        output_file_name (str): The name and path for the final merged PDF file.
+        overwrite (bool): If True, overwrites the output file if it already exists.
+                          If False and the file exists, the merge is skipped.
     """
-    print('PDFs to combine:')
-    for pdf in pdf_list:
-        print(f"  {pdf}")
+
+    if os.path.exists(output_file_name) and not overwrite:
+        print(f"Output file already exists: {output_file_name}")
+        print("Set 'overwrite=True' to force merging and replacement.")
+        return
+
+    merger = PdfMerger()
+    successful_merges = 0
+
+    # 2. Iterate through the list of PDF file paths and append each one
+    print(f"Starting PDF merge process for {len(pdf_files)} files...")
+    for pdf_path in pdf_files:
+        try:
+            # Check if the file path is valid before attempting to open it
+            if not os.path.isfile(pdf_path):
+                 raise FileNotFoundError(f"File not found at path: {pdf_path}")
+
+            merger.append(pdf_path)
+            print(f"  [SUCCESS] Appended: {os.path.basename(pdf_path)}")
+            successful_merges += 1
+
+        except FileNotFoundError as e:
+            print(f"  [SKIPPED] File not found: {e}")
+        except PdfReadError:
+            # Handles cases where the file exists but is not a valid PDF
+            print(f"  [SKIPPED] Invalid or corrupted PDF file: {os.path.basename(pdf_path)}")
+        except Exception as e:
+            # Catch all other unexpected errors
+            print(f"  [ERROR] Failed to append {os.path.basename(pdf_path)}: {e}")
+
+    # 3. Write the final merged PDF to the output file
+    if successful_merges > 0:
+        try:
+            merger.write(output_file_name)
+            print(f"\n--- Successfully merged {successful_merges} files into: {output_file_name} ---")
+        except Exception as e:
+            print(f"\n[CRITICAL ERROR] Failed to write output file: {e}")
+        finally:
+            merger.close()
+    else:
+        print("\n--- No valid PDF files were successfully appended. Merge skipped. ---")
+        merger.close()
         
 def main():
-    if len(sys.argv) != 3:
-        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file>")
+    if len(sys.argv) != 4:
+        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_file>")
         print("  <waiver_folder_path>: Path to the folder containing the FERPA waivers")
         print("  <excel_file>: Path to Excel file containing EYF IDs")
+        print("  <output_file>: Path for the merged PDF output file")
         sys.exit(1)
+    
+    folder_path = sys.argv[1]
+    excel_file = sys.argv[2]
+    output_file = sys.argv[3]
     
     folder_path = sys.argv[1]
     excel_file = sys.argv[2]
@@ -166,7 +227,7 @@ def main():
             print("Operation cancelled.")
             sys.exit(0)
 
-        combine_pdfs(pdfs_to_combine)
+        merge_pdfs(pdfs_to_combine, output_file)
             
     except Exception as e:
         print(f"Unexpected Error: {e}")
