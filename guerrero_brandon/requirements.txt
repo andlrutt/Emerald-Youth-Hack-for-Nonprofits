@@ -1,0 +1,16 @@
+# Student FERPA Management System - Python Requirements
+
+# PDF manipulation library
+pypdf>=6.0.0
+
+# PDF generation library
+reportlab>=4.0.0
+
+# Note: The following are built-in Python libraries (no installation needed):
+# - sqlite3
+# - csv
+# - os
+# - glob
+# - datetime
+# - io
+# - re

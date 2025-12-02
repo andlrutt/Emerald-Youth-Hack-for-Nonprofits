@@ -1,0 +1,13 @@
+student_id,firstname,lastname,email,major,gpa,enrollment_date,has_ferpa
+STU001,John,Doe,john.doe@university.edu,Computer Science,3.85,2022-09-01,Yes
+STU002,Jane,Smith,jane.smith@university.edu,Business Administration,3.92,2022-09-01,Yes
+STU003,Michael,Johnson,michael.johnson@university.edu,Mechanical Engineering,3.67,2023-01-15,Yes
+STU004,Emily,Williams,emily.williams@university.edu,Psychology,3.78,2022-09-01,Yes
+STU005,David,Brown,david.brown@university.edu,Biology,3.95,2023-01-15,Yes
+STU006,Sarah,Martinez,sarah.martinez@university.edu,Chemistry,3.72,2023-09-01,No
+STU007,James,Garcia,james.garcia@university.edu,Mathematics,3.88,2023-09-01,No
+STU008,Lisa,Rodriguez,lisa.rodriguez@university.edu,English Literature,3.64,2024-01-10,No
+STU009,Robert,Anderson,robert.anderson@university.edu,Physics,3.91,2023-09-01,No
+STU010,Amanda,Taylor,amanda.taylor@university.edu,Sociology,3.55,2024-01-10,No
+STU011,Christopher,Lee,christopher.lee@university.edu,Political Science,3.76,2023-09-01,No
+STU012,Rachel,Davis,rachel.davis@university.edu,Art History,3.82,2024-01-10,No
