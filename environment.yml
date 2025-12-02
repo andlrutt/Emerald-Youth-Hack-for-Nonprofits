@@ -1,0 +1,13 @@
+name: emerald-youth-hack
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+    - PyPDF2>=3.0.0
+    - pypdf>=6.0.0
+    - reportlab>=4.0.0
+    - pytest>=7.0.0
+
