@@ -4,11 +4,12 @@ This project uses a custom conda environment with all required dependencies.
 
 ## Conda Installation
 
-![Download Miniconda](screenshots/download_miniconda.png)
+![Conda Setup Step](screenshots/conda_setup_2.png)
 
-1. Download Miniconda from [here](https://www.anaconda.com/download)
+1. Download Miniconda from [here](https://www.anaconda.com/download/success)
 2. Run the installer
 3. When installing, check the option to "Add installation to my PATH environment variable"
+4. Restart your code editor / terminal
 
 ![Conda Setup](screenshots/conda_setup.png)
 
@@ -25,13 +26,14 @@ This project uses a custom conda environment with all required dependencies.
 
 ## One-time setup
 
-Paste these commands into your terminal
+Paste these commands into your terminal. You will need to accept the terms of service when running `conda env create -f environment.yml`
 
 ```bash
 conda init powershell
 conda env create -f environment.yml
-conda activate emerald-youth-hack
 ```
+
+Restart your terminal
 
 ## Deactivating the Environment
 
@@ -46,8 +48,10 @@ conda deactivate
 conda activate emerald-youth-hack
 
 # Then run the script
-python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_file_name>
+python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_pdf_file_name>
 ```
+
+Example usage: `python waivers KCSDataRequest_EYF2425SubmissionExample.xlsx output.pdf`
 
 ## Updating the Environment
 

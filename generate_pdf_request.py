@@ -9,6 +9,9 @@ from pypdf.errors import PdfReadError
 # TODO verify that there are no duplicate EYF IDs in the list
 # TODO verify what to do if there is a duplicate EYF ID or we cannot find one?
 # TODO create dependency list/setup
+# TODO call out explicitly that the output pdf order is the same as what is in the pdf
+# TODO call out that the spreadsheet needs a column name called EYFID, and must consist of only one tab
+# TODO in the event of duplicates, grab the most recently created file, as it is the latest
 # pandas, openpyxl
 
 def read_eyf_ids_from_excel(excel_file, column_name="EYFID"):
@@ -190,16 +193,18 @@ def merge_pdfs(pdf_files, output_file_name, overwrite=True):
         writer.close()
 
 def main():
-    if len(sys.argv) != 4:
-        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_file_name>")
+    if len(sys.argv) < 3 or len(sys.argv) > 4:
+        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file> [output_file_name]")
         print("  <waiver_folder_path>: Path to the folder containing the FERPA waivers")
         print("  <excel_file>: Path to Excel file containing EYF IDs")
-        print("  <output_file>: Path for the merged PDF output file")
+        print("  [output_file]: Path for the merged PDF output file (default: 'output.pdf')")
         sys.exit(1)
     
     folder_path = sys.argv[1]
     excel_file = sys.argv[2]
-    output_file = sys.argv[3]
+    output_file = sys.argv[3] if len(sys.argv) == 4 else 'output.pdf'
+    if not output_file.endswith('.pdf'):
+        output_file += '.pdf'
     
     folder_path = sys.argv[1]
     excel_file = sys.argv[2]
