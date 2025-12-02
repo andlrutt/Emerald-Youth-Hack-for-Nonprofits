@@ -191,7 +191,7 @@ def merge_pdfs(pdf_files, output_file_name, overwrite=True):
 
 def main():
     if len(sys.argv) != 4:
-        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_file>")
+        print("Usage: python generate_pdf_request.py <waiver_folder_path> <excel_file> <output_file_name>")
         print("  <waiver_folder_path>: Path to the folder containing the FERPA waivers")
         print("  <excel_file>: Path to Excel file containing EYF IDs")
         print("  <output_file>: Path for the merged PDF output file")
