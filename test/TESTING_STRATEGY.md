@@ -49,7 +49,7 @@ We need to verify that pages in the merged PDF appear in the same order as the i
    - Example: `[pdf1, pdf2, pdf3]` where pdf1 contains "FIRST", pdf2 contains "SECOND", etc.
 
 3. **Extract and verify page content**
-   - Use PyPDF2's `PdfReader` to read the merged PDF
+   - Use pypdf's `PdfReader` to read the merged PDF
    - Extract text from each page using `page.extract_text()`
    - Verify that page 0 contains "FIRST", page 1 contains "SECOND", etc.
 
@@ -116,7 +116,7 @@ test_pdf_merger.py
 
 ```bash
 # Install dependencies
-pip install pytest reportlab PyPDF2
+pip install pytest reportlab pypdf
 
 # Run all tests
 pytest test_pdf_merger.py -v
@@ -136,7 +136,7 @@ pytest test_pdf_merger.py::TestPDFMergerUnit -v
 
 ## Why This Strategy is Reasonable for a Hackathon
 
-1. **Fast to implement**: Uses existing libraries (pytest, reportlab, PyPDF2)
+1. **Fast to implement**: Uses existing libraries (pytest, reportlab, pypdf)
 2. **Comprehensive**: Tests both unit and integration levels
 3. **Maintainable**: Clear test structure, easy to extend
 4. **Reliable**: Automated verification eliminates human error
